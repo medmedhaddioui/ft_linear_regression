@@ -1,4 +1,5 @@
 from training import train, prediction_price
+
 def predict_price_by_mileage ():
     try:
         value = input("Enter a mileage to predict a price: ")
