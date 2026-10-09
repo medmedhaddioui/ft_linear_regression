@@ -27,12 +27,7 @@ def plot_regression_line(theta0, theta1, min_x, max_x, mileage, price):
     plt.grid(True)
     plt.show()
 
-def estimate_price(theta0 , theta1, mileage): # linear operation to be performed 
-    return theta0 + (theta1 * mileage)
 
-def prediction_price(theta0, theta1, min_x, max_x, mileage):
-    normalized_x = (mileage - min_x) / (max_x - min_x)
-    return estimate_price(theta0, theta1, normalized_x)
 
 def save_thetas(theta0, theta1, filename="thetas.json"):
     data = {
@@ -42,11 +37,20 @@ def save_thetas(theta0, theta1, filename="thetas.json"):
     with open(filename, "w") as f:
         json.dump(data, f, indent=4)
 
+def estimate_price(theta0 , theta1, mileage): # linear operation to be performed 
+    return theta0 + (theta1 * mileage)
+
+def prediction_price(theta0, theta1, min_x, max_x, mileage):
+    normalized_x = (mileage - min_x) / (max_x - min_x)
+    return estimate_price(theta0, theta1, normalized_x)
+
 def training_model(theta0, theta1, mileage, price, number_of_samples):
 
     learning_rate = 0.1
     min_x =  min(mileage)
     max_x  = max(mileage)
+    if min_x == max_x:
+        raise ValueError("Error mileage are identical")
     for _ in range(1000):
         error_sum_theta1 = 0
         error_sum_theta0 = 0
@@ -76,12 +80,12 @@ def read_dataset(filename):
 def main():
     try:
         mileage, price = read_dataset("data.csv")
+        print(mileage, price)
         value = input("Do you want to visualise your data into a graph: (Y/N) ?\n").lower()
         if value == "y":
             display_data(mileage, price);
         theta0, theta1 = 0, 0
         theta0, theta1, min_x, max_x = training_model(theta0 , theta1, mileage, price, len (mileage))
-
         unnorm_theta1 = theta1 / (max_x - min_x)
         unnorm_theta0 = theta0 - (theta1 * min_x) / (max_x - min_x)
         save_thetas(unnorm_theta0, unnorm_theta1)
