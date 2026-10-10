@@ -27,8 +27,6 @@ def plot_regression_line(theta0, theta1, min_x, max_x, mileage, price):
     plt.grid(True)
     plt.show()
 
-
-
 def save_thetas(theta0, theta1, filename="thetas.json"):
     data = {
         "theta0": theta0,
@@ -38,7 +36,7 @@ def save_thetas(theta0, theta1, filename="thetas.json"):
         json.dump(data, f, indent=4)
 
 def estimate_price(theta0 , theta1, mileage): # linear operation to be performed 
-    return theta0 + (theta1 * mileage)
+        return theta0 + (theta1 * mileage)
 
 def prediction_price(theta0, theta1, min_x, max_x, mileage):
     normalized_x = (mileage - min_x) / (max_x - min_x)
@@ -56,12 +54,17 @@ def training_model(theta0, theta1, mileage, price, number_of_samples):
         error_sum_theta0 = 0
         for x, y in zip(mileage, price):
             normalized_x = (x - min_x) / (max_x - min_x)
+            # predict normaly using theta0 , theta1 (first move set at 0)
             prediction = estimate_price(theta0, theta1, normalized_x)
-            error_sum_theta0 += prediction - y
+            # caluculating errors theta0 we calculate predict price - actaul second same but multiplies by mileage
+            error_sum_theta0 += prediction - y 
             error_sum_theta1 += (prediction - y) * normalized_x
+
+        gradient0 = learning_rate * error_sum_theta0
+        gradient1 = learning_rate * error_sum_theta1
+        tmp_theta0 = gradient0 / number_of_samples
+        tmp_theta1 = gradient1 / number_of_samples
         
-        tmp_theta0 = (learning_rate * error_sum_theta0) / number_of_samples
-        tmp_theta1 = (learning_rate * error_sum_theta1) / number_of_samples
         theta0 -= tmp_theta0
         theta1 -= tmp_theta1
     return theta0, theta1, min_x, max_x
@@ -97,10 +100,10 @@ def main():
     
     except ValueError as error:
         print("ValueError: ", error)
+    except KeyboardInterrupt:
+        print("\nInput cancelled.")
     except Exception:
         print("Error been raised")
-    except KeyboardInterrupt:
-        print("Error")
 
 if __name__ == "__main__":
     main()
