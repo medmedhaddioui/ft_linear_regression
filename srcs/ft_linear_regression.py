@@ -49,24 +49,26 @@ def training_model(theta0, theta1, mileage, price, number_of_samples):
     max_x  = max(mileage)
     if min_x == max_x:
         raise ValueError("Error mileage are identical")
+    
     for _ in range(1000):
         error_sum_theta1 = 0
         error_sum_theta0 = 0
+
         for x, y in zip(mileage, price):
             normalized_x = (x - min_x) / (max_x - min_x)
-            # predict normaly using theta0 , theta1 (first move set at 0)
             prediction = estimate_price(theta0, theta1, normalized_x)
-            # caluculating errors theta0 we calculate predict price - actaul second same but multiplies by mileage
             error_sum_theta0 += prediction - y 
             error_sum_theta1 += (prediction - y) * normalized_x
 
         gradient0 = learning_rate * error_sum_theta0
         gradient1 = learning_rate * error_sum_theta1
+
         tmp_theta0 = gradient0 / number_of_samples
         tmp_theta1 = gradient1 / number_of_samples
-        
+
         theta0 -= tmp_theta0
         theta1 -= tmp_theta1
+
     return theta0, theta1, min_x, max_x
 
 def read_dataset(filename):
@@ -83,7 +85,6 @@ def read_dataset(filename):
 def main():
     try:
         mileage, price = read_dataset("data.csv")
-        print(mileage, price)
         value = input("Do you want to visualise your data into a graph: (Y/N) ?\n").lower()
         if value == "y":
             display_data(mileage, price);
@@ -96,7 +97,7 @@ def main():
         value = input("Do you want to visualise your linear regression within your data: (Y/N)\n").lower()
         if value == "y":
             plot_regression_line(theta0, theta1, min_x, max_x, mileage, price)
-        print(f"Model parameters saved to '{"thetas.json"}': theta0 = {theta0:.4f}, theta1 = {theta1:.4f}") 
+        print(f"Model parameters saved to '{"thetas.json"}': theta0 = {unnorm_theta0:.4f}, theta1 = {unnorm_theta1:.4f}") 
     
     except ValueError as error:
         print("ValueError: ", error)
